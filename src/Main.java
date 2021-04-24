@@ -1,36 +1,122 @@
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
-        FilmManager filmManager = new FilmManager();
+        Console console = new Console();
+    }
 
-        Film[] films = {
-            new Film(1,1,"Selam",2000, "Güzel bir film"),
-            new Film(2,1,"Teen Wolf", 2011,"Genç Kurt, MTV için Jeff Davis tarafından geliştirilen bir Amerikan televizyon dizisidir."),
-            new Film(3,1,"War for the Planet of the Apes", 2017,"Maymunlar Cehennemi üçlemesinin son perdesine hazır olun."),
-            new Film(4,1,"The Iron Giant", 1999, "Ufukta dev birşey var. Hogarth Hughes, yıldızlardan dünyaya düşmüş kocaman bir robotu kurtaran küçük bir çocuktur.")
-        };
+}
 
-        for(Film film : films){
-            filmManager.Add(film);
-        }
-        System.out.println(filmManager.films.toString());
+class Console{
+    Scanner scanner = new Scanner(System.in);
+    FilmManager filmManager = new FilmManager();
+    CategoryManager categoryManager = new CategoryManager();
+
+    Console(){
+        Menu();
+    }
+
+    private void Menu(){
+        Mark("Menu");
+        System.out.println("1. Films");
+        System.out.println("2. Categories");
+        System.out.println("3. Exit");
+        System.out.print("Choose: ");
+        int choose = scanner.nextInt();
+        Mark();
         System.out.println("");
 
-        CategoryManager categoryManager = new CategoryManager();
 
-        Category[] categories = {
-            new Category(1, "Aksiyon"),
-            new Category(2, "Macera"),
-            new Category(3,"Yerli"),
-            new Category(4, "Bilimkurgu"),
-            new Category(5,"Komedi"),
-            new Category(6,"Romantik")
-        };
+        if(choose == 1){
+            Films();
+        }
+        else if(choose == 2){
 
-        for(Category category : categories){
-            categoryManager.Add(category);
+        }
+        else if(choose == 3){
+            System.exit(0);
+        }
+        else{
+
         }
 
-        System.out.println(categoryManager.categories.toString());
+    }
+
+    private void Films(){
+        Mark("Films");
+        for(int i = 1; i <= filmManager.films.size(); i++){
+            System.out.printf("%s. %s\n", i, filmManager.films.get(i-1));
+        }
+        System.out.println("1. Add");
+        System.out.println("2. Delete");
+        System.out.println("3. Update");
+        System.out.print("Choose: "); int choose = scanner.nextInt();
+        Mark();
+
+        if(choose == 1){
+            FilmAdd();
+        }
+        else if(choose == 2){
+            FilmDelete();
+        }
+        else if(choose == 3){
+            FilmUpdate();
+        }
+
+    }
+
+    private void FilmAdd(){
+        Mark("Film Add");
+        System.out.print("Id: "); int id = scanner.nextInt();
+        System.out.print("Category Id: "); int categoryId = scanner.nextInt();
+        System.out.print("Name: "); String name = scanner.next();
+        System.out.print("Year: "); int year = scanner.nextInt();
+        System.out.print("Description: "); String description = scanner.next();
+        Film film = new Film(id, categoryId, name, year, description);
+        filmManager.Add(film);
+        Mark();
+        Menu();
+    }
+
+    private void FilmDelete(){
+        Mark("Film Delete");
+        System.out.print("Id: "); int id = scanner.nextInt();
+        Film foundedFilm = filmManager.findWithId(id);
+        filmManager.Delete(foundedFilm);
+        Mark();
+        Menu();
+    }
+
+    private void FilmUpdate(){
+        Mark("Film Update");
+        for(int i = 1; i <= filmManager.films.size(); i++){
+            System.out.printf("%s. %s\n", i, filmManager.films.get(i));
+        }
+        System.out.print("Choose: "); int choose = scanner.nextInt();
+        Film choosenFilm = filmManager.films.get(choose-1);
+        System.out.print("Id: "); int id = scanner.nextInt();
+        System.out.print("Category Id: "); int categoryId = scanner.nextInt();
+        System.out.print("Name: "); String name = scanner.next();
+        System.out.print("Year: "); int year = scanner.nextInt();
+        System.out.print("Description: "); String description = scanner.next();
+        Film newFilm = new Film(id, categoryId, name, year, description);
+        filmManager.Update(choosenFilm, newFilm);
+        Mark();
+        Menu();
+    }
+
+    private void Mark(){
+        System.out.println("----------------");
+    }
+
+    private void Mark(String text){
+        String afterLines = "-------------";
+        int lineToAdd = afterLines.length() - text.length();
+        afterLines = afterLines.substring(0, lineToAdd);
+        System.out.printf("---%s%s\n",text, afterLines);
     }
 }
